@@ -1,0 +1,126 @@
+<!--A Design by W3layouts
+Author: W3layout
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<title>PGA Golf Pick'em Challenge: Home Page</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+<link href="css/bootstrap.css" rel='stylesheet' type='text/css' />
+<link href="css/style.css" rel='stylesheet' type='text/css' />
+<script src="js/jquery-1.11.0.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+<link rel="icon" href="golfball.jpg">
+<!---- start-smoth-scrolling---->
+<script type="text/javascript" src="js/move-top.js"></script>
+<script type="text/javascript" src="js/easing.js"></script>
+<script type="text/javascript">
+			jQuery(document).ready(function($) {
+				$(".scroll").click(function(event){
+					event.preventDefault();
+					$('html,body').animate({scrollTop:$(this.hash).offset().top},1000);
+				});
+			});
+		</script>
+<!--start-smoth-scrolling-->
+<!--start-top-nav-script-->
+		<script>
+			$(function() {
+				var pull 		= $('#pull');
+					menu 		= $('nav ul');
+					menuHeight	= menu.height();
+				$(pull).on('click', function(e) {
+					e.preventDefault();
+					menu.slideToggle();
+				});
+				$(window).resize(function(){
+	        		var w = $(window).width();
+	        		if(w > 320 && menu.is(':hidden')) {
+	        			menu.removeAttr('style');
+	        		}
+	    		});
+			});
+		</script>
+<!--End-top-nav-script-->
+</head>
+<body>
+<!--start-header-->
+	<div class="header" id="home">
+		<div class="container">
+			<div class="head">
+			<div class="logo">
+				<a href="index.html"><img src="images/PGA_Logo.png" alt="" /></a>
+			</div>
+			<div class="navigation">
+				 <span class="menu"></span>
+					<ul class="navig">
+						<li><a href="index.html"  class="active">home</a></li>
+						<li><a href="schedule.html">schedule</a></li>
+						<li><a href="weekly.html">weekly</a></li>
+						<li><a href="stats.html">stats</a></li>
+						<li><a href="rules.html">rules</a></li>
+						<li><a href="archive.html">archive</a></li>
+						<li><a href="t_summary.html">tournament summary</a></li>
+					</ul>
+			</div>
+		  <div class="clearfix"></div>
+			</div>
+			</div>
+		</div>
+	<!-- script-for-menu -->
+	<!-- script-for-menu -->
+		 <script>
+				$("span.menu").click(function(){
+					$(" ul.navig").slideToggle("slow" , function(){
+					});
+				});
+		 </script>
+		 <!-- script-for-menu -->
+
+	 <!--start-advn-->
+	 <div class="advn">
+	 	<div class="container">
+	 		<div class="advn-main">
+	 			<h3>Welcome to the PGA Golf Pick'em Challenge</h3>
+	 			<div class="advn-top">
+	 					<p>Welcome to the Jason/Josh PGA Golf Pick'em Challenge website!</p>
+          </div>
+	 				<div class="clearfix"></div>
+	 			</div>
+	 		</div>
+	 	</div>
+	 </div>
+	 <!--end-advn-->
+	 <!--start-footer-->
+	 <div class="footer">
+	 	<div class="container">
+	 			<div class="footer-bottom">
+	 				<p>TEMPLATE BY W3LAYOUTS</a></p>
+	 			</div>
+	 		</div>
+	 	</div>
+	 	<script type="text/javascript">
+									$(document).ready(function() {
+										/*
+										var defaults = {
+								  			containerID: 'toTop', // fading element id
+											containerHoverID: 'toTopHover', // fading element hover id
+											scrollSpeed: 1200,
+											easingType: 'linear'
+								 		};
+										*/
+
+										$().UItoTop({ easingType: 'easeOutQuart' });
+
+									});
+								</script>
+		<a href="#home" id="toTop" class="scroll" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+	 </div>
+	 <!--end-footer-->
+</body>
+</html>
