@@ -112,11 +112,11 @@
     // ==========================================
     // ⚙️ CONFIGURATION: SET YOUR DETAILS HERE
     // ==========================================
-    const SHEET_ID = '2PACX-1vRbqpkOVLenQYgqMpLMQuot3W_8Qt64kl7j1rFvmmeUT6X-7eQapNkRdZxAxcGaWlNi4wao-wAGopJD'; 
+    const SHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI'; 
     const SHEET_TITLE = 'yearlytotals'; 
     
     // Constructing the Visualization query string data endpoint
-    const FULL_URL = `https://google.com1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/gviz/tq?sheet=${encodeURIComponent(yearlytotals)}`;
+    const FULL_URL = `https://google.com{SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(yearlytotals)}`;
 
     // Execute data fetch
     fetch(FULL_URL)
