@@ -52,6 +52,111 @@
     </div>
 </div>
 
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding: 20px;
+      background-color: #f4f6f8;
+    }
+    .table-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      overflow-x: auto; /* Makes it scroll beautifully on mobile screens */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th {
+      background-color: #1a73e8; /* Elegant Google Blue header */
+      color: white;
+      padding: 14px;
+      font-weight: 600;
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #e0e0e0;
+      color: #333;
+    }
+    tr:hover {
+      background-color: #f1f3f4; /* Subtle hover effect for rows */
+    }
+    .loading {
+      padding: 20px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="table-container">
+    <div id="loading-text" class="loading">Loading live data...</div>
+    <table id="data-table" style="display: none;">
+      <thead id="table-head"></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+
+  <script>
+    // 1. Put your spreadsheet ID here
+    const SHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI'; 
+    // 2. Specify the tab name exactly as it appears at the bottom of your sheet
+    const SHEET_TITLE = 'yearrlytotals'; 
+    
+    const FULL_URL = `https://docs.google.com/spreadsheets/d/1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/edit`;
+
+    fetch(FULL_URL)
+      .then(res => res.text())
+      .then(data => {
+        // Hide loading text and show table
+        document.getElementById('loading-text').style.display = 'none';
+        document.getElementById('data-table').style.display = 'table';
+
+        // Parse Google's data format safely
+        const json = JSON.parse(data.substr(47).slice(0, -2));
+        const rows = json.table.rows;
+        
+        const tableHead = document.getElementById('table-head');
+        const tableBody = document.getElementById('table-body');
+
+        // Create Table Headers dynamically based on sheet columns
+        let headerRow = '<tr>';
+        json.table.cols.forEach(col => {
+          if (col.label) headerRow += `<th>${col.label}</th>`;
+        });
+        headerRow += '</tr>';
+        tableHead.innerHTML = headerRow;
+
+        // Populate Table Rows with your spreadsheet data
+        rows.forEach(row => {
+          let tr = document.createElement('tr');
+          row.c.forEach(cell => {
+            let td = document.createElement('td');
+            // Check if cell has value, otherwise leave blank
+            td.textContent = cell ? cell.v : '';
+            tr.appendChild(td);
+          });
+          tableBody.appendChild(tr);
+        });
+      })
+      .catch(err => {
+        document.getElementById('loading-text').textContent = 'Error loading data. Make sure your sheet is Published to Web.';
+        console.error(err);
+      });
+  </script>
+
+
+
+
+
+
+
+  
 <hr>
 <h4 align="center"></h4>
 <div class="w3-row-padding w3-center w3-margin-top">
