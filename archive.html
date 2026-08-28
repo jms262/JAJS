@@ -101,61 +101,91 @@
       <tbody id="table-body"></tbody>
     </table>
   </div>
+    
+    <table id="data-table" style="display: none;">
+      <thead id="table-head"></thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
 
   <script>
-    // 1. Put your spreadsheet ID here
+    // ==========================================
+    // ⚙️ CONFIGURATION: SET YOUR DETAILS HERE
+    // ==========================================
     const SHEET_ID = '2PACX-1vRbqpkOVLenQYgqMpLMQuot3W_8Qt64kl7j1rFvmmeUT6X-7eQapNkRdZxAxcGaWlNi4wao-wAGopJD'; 
-    // 2. Specify the tab name exactly as it appears at the bottom of your sheet
     const SHEET_TITLE = 'yearrlytotals'; 
     
+    // Constructing the Visualization query string data endpoint
     const FULL_URL = `https://google.com1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/gviz/tq?sheet=${encodeURIComponent(yearrlytotals)}`;
 
-
-fetch(FULL_URL)
-  .then(res => res.text())
-  .then(data => {
-    // 1. Automatically extract the clean data inside Google's parenthesis wrapper
-    const match = data.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
-    
-    if (!match || !match[1]) {
-      throw new Error("Could not parse the Google Sheets response format.");
-    }
-
-    // 2. Safely parse the extracted string into readable JSON
-    const json = JSON.parse(match[1]);
-
-    // 3. Hide loading text and show table
-    document.getElementById('loading-text').style.display = 'none';
-    document.getElementById('data-table').style.display = 'table';
+    // Execute data fetch
+    fetch(FULL_URL)
+      .then(res => {
+        if (!res.ok) throw new Error(`Network issue connecting to Google (Status: ${res.status})`);
+        return res.text();
+      })
+      .then(data => {
+        // Regex logic to safely isolate the structural JSON from Google's protection wrapper
+        const match = data.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
         
+        if (!match || !match[1]) {
+          throw new Error("Unable to decode the sheet data block. Verify that 'Publish to Web' is active.");
+        }
+
+        const json = JSON.parse(match[1]);
+        
+        // Intercept standard errors passed back inside the structural object
+        if (json.status === 'error') {
+          throw new Error(`Google Sheet returned error: ${json.errors[0].detailed_message}`);
+        }
+
+        const rows = json.table.rows;
         const tableHead = document.getElementById('table-head');
         const tableBody = document.getElementById('table-body');
 
-        // Create Table Headers dynamically based on sheet columns
+        // 1. Build out the headers mapping values dynamically
         let headerRow = '<tr>';
-        json.table.cols.forEach(col => {
-          if (col.label) headerRow += `<th>${col.label}</th>`;
+        json.table.cols.forEach((col, index) => {
+          // Fallbacks: Explicit label -> First cell item data string -> Column index string
+          let headerText = col.label ? col.label : (rows[0] && rows[0].c[index] ? rows[0].c[index].v : `Column ${index + 1}`);
+          headerRow += `<th>${headerText}</th>`;
         });
         headerRow += '</tr>';
         tableHead.innerHTML = headerRow;
 
-        // Populate Table Rows with your spreadsheet data
-        rows.forEach(row => {
+        // 2. Build rows structure mapping individual data nodes
+        rows.forEach((row, rowIndex) => {
+          // Skip the first row if you are pulling headers from the row data instead of explicit column labels
+          if (!json.table.cols[0].label && rowIndex === 0) return; 
+
           let tr = document.createElement('tr');
           row.c.forEach(cell => {
             let td = document.createElement('td');
-            // Check if cell has value, otherwise leave blank
-            td.textContent = cell ? cell.v : '';
+            // Safely verify if node holds content formatting values
+            td.textContent = cell && cell.v !== null ? cell.v : '';
             tr.appendChild(td);
           });
           tableBody.appendChild(tr);
         });
+
+        // Toggle visibility interfaces to display your finished UI
+        document.getElementById('status-display').style.display = 'none';
+        document.getElementById('data-table').style.display = 'table';
       })
       .catch(err => {
-        document.getElementById('loading-text').textContent = 'Error loading data. Make sure your sheet is Published to Web.';
-        console.error(err);
+        // Display precise error messages safely to layout screens
+        document.getElementById('status-display').innerHTML = `
+          <div class="error-text">
+            <strong>⚠️ Error Loading Data</strong><br>
+            ${err.message}<br><br>
+            <small style="color:#718096">Check browser console logs (F12) for deep technical diagnostics context.</small>
+          </div>`;
+        console.error("Technical debugging log details:", err);
       });
   </script>
+</body>
+</html>
+
 
 
 
