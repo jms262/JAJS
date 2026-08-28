@@ -176,12 +176,13 @@
       })
       .catch(err => {
         // Display precise error messages safely to layout screens
-        document.getElementById('status-display').innerHTML = ` ... `; 
+        document.getElementById('status-display').innerHTML = `
           <div class="error-text">
             <strong>⚠️ Error Loading Data</strong><br>
             ${err.message}<br><br>
             <small style="color:#718096">Check browser console logs (F12) for deep technical diagnostics context.</small>
-          </div>`;
+          </div>
+        `;
         console.error("Technical debugging log details:", err);
       });
   </script>
