@@ -102,11 +102,12 @@
     </table>
   </div>
     
-    <table id="data-table" style="display: none;">
-      <thead id="table-head"></thead>
-      <tbody id="table-body"></tbody>
-    </table>
-  </div>
+<div id="status-display" class="status-message">Loading live data...</div>
+
+<table id="data-table" style="display: none;">
+  <thead id="table-head"></thead>
+  <tbody id="table-body"></tbody>
+</table>
 
   <script>
     // ==========================================
@@ -175,7 +176,7 @@
       })
       .catch(err => {
         // Display precise error messages safely to layout screens
-        document.getElementById('status-display').innerHTML = `
+        document.getElementById('status-display').innerHTML = ` ... `; 
           <div class="error-text">
             <strong>⚠️ Error Loading Data</strong><br>
             ${err.message}<br><br>
