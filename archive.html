@@ -1,70 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>PGA Pick'em Challenge: Historical Data - Past Year Summary</title>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="css/w3.css">
-<link rel="stylesheet" href="css/w3-theme-black.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
-<link rel="icon" href="img/golfball.jpg">
-<!-- URL of Template: https://www.w3schools.com/css/css_rwd_templates.asp -->
-</head>
-<body>
-
-<!-- Side Navigation -->
-<nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center" style="display:none" id="mySidebar">
-  <button class="w3-bar-item w3-button" onclick="w3_close()">Close <i class="fa fa-remove"></i></button>
-  <a href="index.html" class="w3-bar-item w3-button">Home</a>
-  <a href="schedule.html" class="w3-bar-item w3-button">Schedule</a>
-  <a href="weekly.html" class="w3-bar-item w3-button">Weekly</a>
-  <a href="stats.html" class="w3-bar-item w3-button">Stats</a>
-  <a href="rules.html" class="w3-bar-item w3-button">Rules</a>
-  <a href="archive.html" class="w3-bar-item w3-button">Past Years</a>
-  <a href="tsummary.html" class="w3-bar-item w3-button">Tournament Summary</a>
-</nav>
-
-<!-- Header -->
-<header class="w3-container w3-theme w3-padding" id="myHeader">
-  <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i>
-  <div class="w3-center">
-  <h1 class="w3-xxxlarge w3-animate-bottom">PGA Pick'em Challenge</h1>
-  <h3>Historical Data - Past Year Summary</h3>
-  </div>
-</header>
-
-<!-- Modal -->
-<div id="id01" class="w3-modal">
-    <div class="w3-modal-content w3-card-4 w3-animate-top">
-      <header class="w3-container w3-theme-l1">
-        <span onclick="document.getElementById('id01').style.display='none'"
-        class="w3-button w3-display-topright">×</span>
-        <h4>Oh snap! We just showed you a modal..</h4>
-        <h5>Because we can <i class="fa fa-smile-o"></i></h5>
-      </header>
-      <div class="w3-padding">
-        <p>Cool huh? Ok, enough teasing around..</p>
-        <p>Go to our <a class="w3-btn" href="/w3css/default.asp">W3.CSS Tutorial</a> to learn more!</p>
-      </div>
-      <footer class="w3-container w3-theme-l1">
-        <p>Modal footer</p>
-      </footer>
-    </div>
-</div>
-
+  <title>PGA Pick'em Challenge: Historical Data - Past Year Summary</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/w3.css">
+  <link rel="stylesheet" href="css/w3-theme-black.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+  <link rel="icon" href="img/golfball.jpg">
+  
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      padding: 20px;
-      background-color: #f4f6f8;
-    }
+    /* Clean custom overrides for the dynamic spreadsheet table */
     .table-container {
       max-width: 1000px;
-      margin: 0 auto;
+      margin: 20px auto;
       background: white;
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      overflow-x: auto; /* Makes it scroll beautifully on mobile screens */
+      overflow-x: auto; 
     }
     table {
       width: 100%;
@@ -72,10 +25,11 @@
       text-align: left;
     }
     th {
-      background-color: #1a73e8; /* Elegant Google Blue header */
+      background-color: #1a73e8; 
       color: white;
       padding: 14px;
       font-weight: 600;
+      white-space: nowrap;
     }
     td {
       padding: 12px 14px;
@@ -83,237 +37,205 @@
       color: #333;
     }
     tr:hover {
-      background-color: #f1f3f4; /* Subtle hover effect for rows */
+      background-color: #f1f3f4; 
     }
-    .loading {
+    .loading-message {
+      padding: 40px;
+      text-align: center;
+      color: #4a5568;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .error-text {
+      color: #e53e3e;
+      line-height: 1.5;
       padding: 20px;
       text-align: center;
-      color: #666;
     }
   </style>
 </head>
 <body>
 
-  <div class="table-container">
-    <div id="loading-text" class="loading">Loading live data...</div>
-    <table id="data-table" style="display: none;">
-      <thead id="table-head"></thead>
-      <tbody id="table-body"></tbody>
-    </table>
+  <!-- Side Navigation -->
+  <nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center" style="display:none" id="mySidebar">
+    <button class="w3-bar-item w3-button" onclick="w3_close()">Close <i class="fa fa-remove"></i></button>
+    <a href="index.html" class="w3-bar-item w3-button">Home</a>
+    <a href="schedule.html" class="w3-bar-item w3-button">Schedule</a>
+    <a href="weekly.html" class="w3-bar-item w3-button">Weekly</a>
+    <a href="stats.html" class="w3-bar-item w3-button">Stats</a>
+    <a href="rules.html" class="w3-bar-item w3-button">Rules</a>
+    <a href="archive.html" class="w3-bar-item w3-button">Past Years</a>
+    <a href="tsummary.html" class="w3-bar-item w3-button">Tournament Summary</a>
+  </nav>
+
+  <!-- Header -->
+  <header class="w3-container w3-theme w3-padding" id="myHeader">
+    <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i>
+    <div class="w3-center">
+      <h1 class="w3-xxxlarge w3-animate-bottom">PGA Pick'em Challenge</h1>
+      <h3>Historical Data - Past Year Summary</h3>
+    </div>
+  </header>
+
+  <!-- Spreadsheet Data Table Section -->
+  <div class="w3-container w3-padding-32">
+    <div class="table-container">
+      <div id="status-display" class="loading-message">Loading live data from Google Sheets...</div>
+      
+      <table id="data-table" style="display: none;">
+        <thead id="table-head"></thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
   </div>
-    
-<div id="status-display" class="status-message">Loading live data...</div>
 
-<table id="data-table" style="display: none;">
-  <thead id="table-head"></thead>
-  <tbody id="table-body"></tbody>
-</table>
+  <!-- Footer Layout -->
+  <div class="w3-row-padding w3-center w3-margin-top">
+    <footer>
+      <hr>
+      <img class="bg" src="img/pebblefooter.jpeg" alt="Footer Banner">
+      <div style="position:relative;bottom:55px;" class="w3-tooltip w3-right">
+        <span class="w3-text w3-theme-light w3-padding">Go To Top</span>
+        <a class="w3-text-white" href="#myHeader">
+          <span class="w3-xlarge"><i class="fa fa-chevron-circle-up"></i></span>
+        </a>
+      </div>
+    </footer>
+  </div>
 
+  <!-- Core Google Sheets Data Engine Script -->
   <script>
-    // ==========================================
-    // ⚙️ CONFIGURATION: SET YOUR DETAILS HERE
-    // ==========================================
     const SHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI'; 
     const SHEET_TITLE = 'yearlytotals'; 
+    
+    // Explicit CSV text extraction string pipeline endpoint
+    const FULL_URL = `https://google.com{SHEET_ID}/gexport?format=csv&sheet=${encodeURIComponent(SHEET_TITLE)}`;
 
-    // Make sure to use the exact ` and ${} syntax below:
-     const FULL_URL = 'https://docs.google.com/spreadsheets/d/1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/gviz/tq?sheet=yearlytotals';
-
-
-    // Execute data fetch
-    console.log("Fetching from URL:", FULL_URL);
+    console.log("Fetching clean data from:", FULL_URL);
 
     fetch(FULL_URL)
       .then(res => {
         if (!res.ok) throw new Error(`Network issue connecting to Google (Status: ${res.status})`);
         return res.text();
       })
-      .then(data => {
-        console.log("Raw response received from Google.");
+      .then(csvText => {
+        console.log("Raw CSV response received from Google.");
         
-        // 1. Isolate the inner data payload from Google's wrapper function
-        const match = data.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
-        
-        if (!match || !match[1]) {
-          throw new Error("Unable to parse the data structure. Ensure your sheet is Published to Web.");
-        }
-
-        // 2. CRITICAL FIX: Sanitize control breaks and unescaped quotes to prevent JSON parsing crashes
-        let cleanJsonText = match[1]
-          .replace(/\\x22/g, '"')       /* Re-align hex quotation marks */
-          .replace(/[\u0000-\u001F]+/g, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r')); /* Escape row line breaks */
-
-        const json = JSON.parse(cleanJsonText);
-        console.log("JSON successfully parsed:", json);
-        
-        if (json.status === 'error') {
-          throw new Error(`Google Sheet API error: ${json.errors.detailed_message}`);
-        }
-
-        const rows = json.table.rows;
-        const cols = json.table.cols;
         const tableHead = document.getElementById('table-head');
         const tableBody = document.getElementById('table-body');
 
-        // 3. Build headers mapping
-        let headerRow = '<tr>';
-        let hasLabels = false;
+        // Robust CSV processing loops protecting string cells holding syntax quotes
+        const rows = [];
+        let currentRow = [];
+        let currentCell = '';
+        let insideQuotes = false;
 
-        cols.forEach((col, index) => {
-          let headerText = "";
-          if (col && col.label) {
-            headerText = col.label;
-            hasLabels = true;
-          } else if (rows && rows[0] && rows[0].c && rows[0].c[index]) {
-            headerText = rows[0].c[index].v !== null ? rows[0].c[index].v : "";
-          } else {
-            headerText = `Column ${index + 1}`;
-          }
-          headerRow += `<th>${headerText}</th>`;
-        });
-        headerRow += '</tr>';
-        tableHead.innerHTML = headerRow;
+        for (let i = 0; i < csvText.length; i++) {
+          let char = csvText[i];
+          let nextChar = csvText[i + 1];
 
-        // 4. Build table rows mapping
-        tableBody.innerHTML = ''; // Clear prior states
-        rows.forEach((row, rowIndex) => {
-          // Skip row 0 if it was manually pulled to act as column header label text fallbacks
-          if (!hasLabels && rowIndex === 0) return; 
-          if (!row || !row.c) return;
-
-          let tr = document.createElement('tr');
-          row.c.forEach(cell => {
-            let td = document.createElement('td');
-            let cellValue = '';
-            if (cell) {
-              cellValue = cell.f !== undefined && cell.f !== null ? cell.f : (cell.v !== null ? cell.v : '');
+          if (char === '"') {
+            if (insideQuotes && nextChar === '"') {
+              currentCell += '"'; 
+              i++;
+            } else {
+              insideQuotes = !insideQuotes; 
             }
-            td.textContent = cellValue;
+          } else if (char === ',' && !insideQuotes) {
+            currentRow.push(currentCell.trim());
+            currentCell = '';
+          } else if ((char === '\r' || char === '\n') && !insideQuotes) {
+            if (char === '\r' && nextChar === '\n') i++; 
+            currentRow.push(currentCell.trim());
+            if (currentRow.length > 0 && currentRow.some(cell => cell !== '')) {
+              rows.push(currentRow);
+            }
+            currentRow = [];
+            currentCell = '';
+          } else {
+            currentCell += char;
+          }
+        }
+        if (currentCell || currentRow.length > 0) {
+          currentRow.push(currentCell.trim());
+          rows.push(currentRow);
+        }
+
+        if (rows.length === 0) {
+          throw new Error("The spreadsheet worksheet appears to be completely empty.");
+        }
+
+        // 1. Map Headers (Row 1 data points)
+        const headers = rows[0];
+        let headerHtml = '<tr>';
+        headers.forEach(headerText => {
+          headerHtml += `<th>${headerText || '—'}</th>`;
+        });
+        headerHtml += '</tr>';
+        tableHead.innerHTML = headerHtml;
+
+        // 2. Map Row Data (Row 2 data points downwards)
+        for (let i = 1; i < rows.length; i++) {
+          let tr = document.createElement('tr');
+          rows[i].forEach(cellText => {
+            let td = document.createElement('td');
+            td.textContent = cellText;
             tr.appendChild(td);
           });
           tableBody.appendChild(tr);
-        });
+        }
 
-        // Toggle UI states
+        // Display Table UI elements
         document.getElementById('status-display').style.display = 'none';
         document.getElementById('data-table').style.display = 'table';
-        console.log("Table successfully rendered onto page!");
+        console.log("CSV Table mapping completed successfully!");
       })
       .catch(err => {
         document.getElementById('status-display').innerHTML = `
           <div class="error-text">
             <strong>⚠️ Error Loading Data</strong><br>
             ${err.message}<br><br>
-            <small style="color:#718096">Open the developer console (F12) to check background error logs.</small>
+            <small style="color:#718096">Verify the spreadsheet layout and check browser development consoles for full data tracking trace lines.</small>
           </div>`;
-        console.error("Critical rendering error:", err);
+        console.error("Critical extraction loop crash log trace:", err);
       });
-
   </script>
-</body>
-</html>
 
-
-
-
-
-
-
-
-  
-<hr>
-<h4 align="center"></h4>
-<div class="w3-row-padding w3-center w3-margin-top">
-
-<!-- Footer -->
-<footer>
-  <hr>
-  <img class="bg" src="img/pebblefooter.jpeg">
-  <div style="position:relative;bottom:55px;" class="w3-tooltip w3-right">
-    <span class="w3-text w3-theme-light w3-padding">Go To Top</span> 
-    <a class="w3-text-white" href="#myHeader"><span class="w3-xlarge">
-    <i class="fa fa-chevron-circle-up"></i></span></a>
-  </div>
-</footer>
-
-<!-- Script for Sidebar, Tabs, Accordions, Progress bars and slideshows -->
-<script>
-// Side navigation
-function w3_open() {
-  var x = document.getElementById("mySidebar");
-  x.style.width = "100%";
-  x.style.fontSize = "40px";
-  x.style.paddingTop = "10%";
-  x.style.display = "block";
-}
-function w3_close() {
-  document.getElementById("mySidebar").style.display = "none";
-}
-
-// Tabs
-function openCity(evt, cityName) {
-  var i;
-  var x = document.getElementsByClassName("city");
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
-  }
-  var activebtn = document.getElementsByClassName("testbtn");
-  for (i = 0; i < x.length; i++) {
-    activebtn[i].className = activebtn[i].className.replace(" w3-dark-grey", "");
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " w3-dark-grey";
-}
-
-var mybtn = document.getElementsByClassName("testbtn")[0];
-mybtn?.click();
-
-// Accordions
-function myAccFunc(id) {
-  var x = document.getElementById(id);
-  if (x.className.indexOf("w3-show") == -1) {
-    x.className += " w3-show";
-  } else {
-    x.className = x.className.replace(" w3-show", "");
-  }
-}
-
-// Slideshows
-var slideIndex = 1;
-
-function plusDivs(n) {
-  slideIndex = slideIndex + n;
-  showDivs(slideIndex);
-}
-
-function showDivs(n) {
-  var x = document.getElementsByClassName("mySlides");
-  if (n > x.length) {slideIndex = 1}
-  if (n < 1) {slideIndex = x.length} ;
-  for (i = 0; i < x.length; i++) {
-    x[i].style.display = "none";
-  }
-  x[slideIndex-1].style.display = "block";
-}
-
-showDivs(1);
-
-// Progress Bars
-function move() {
-  var elem = document.getElementById("myBar");
-  var width = 5;
-  var id = setInterval(frame, 10);
-  function frame() {
-    if (width == 100) {
-      clearInterval(id);
-    } else {
-      width++;
-      elem.style.width = width + '%';
-      elem.innerHTML = width * 1  + '%';
+  <!-- Sidebar / Interface Interaction Logic Script -->
+  <script>
+    function w3_open() {
+      var x = document.getElementById("mySidebar");
+      x.style.width = "100%";
+      x.style.fontSize = "40px";
+      x.style.paddingTop = "10%";
+      x.style.display = "block";
     }
-  }
-}
-</script>
+
+    function w3_close() {
+      document.getElementById("mySidebar").style.display = "none";
+    }
+
+    function openCity(evt, cityName) {
+      var i;
+      var x = document.getElementsByClassName("city");
+      for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+      }
+      var activebtn = document.getElementsByClassName("testbtn");
+      for (i = 0; i < activebtn.length; i++) {
+        activebtn[i].className = activebtn[i].className.replace(" w3-dark-grey", "");
+      }
+      var targetElement = document.getElementById(cityName);
+      if (targetElement) targetElement.style.display = "block";
+      if (evt && evt.currentTarget) evt.currentTarget.className += " w3-dark-grey";
+    }
+
+    // Safety implementation verifying node exists before forcing clicks
+    var mybtn = document.getElementsByClassName("testbtn")[0];
+    if (mybtn) {
+      mybtn.click();
+    }
+  </script>
 
 </body>
 </html>
