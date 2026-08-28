@@ -116,7 +116,7 @@
     const SHEET_TITLE = 'yearlytotals'; 
 
     // Make sure to use the exact ` and ${} syntax below:
-    const FULL_URL = `https://google.com{SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_TITLE)}`;
+    const FULL_URL = `https://google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${encodeURIComponent(SHEET_TITLE)}`;
 
     // Execute data fetch
     fetch(FULL_URL)
