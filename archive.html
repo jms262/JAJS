@@ -121,70 +121,94 @@
 
 
     // Execute data fetch
+    console.log("Fetching from URL:", FULL_URL);
+
     fetch(FULL_URL)
       .then(res => {
         if (!res.ok) throw new Error(`Network issue connecting to Google (Status: ${res.status})`);
         return res.text();
       })
       .then(data => {
-        // Regex logic to safely isolate the structural JSON from Google's protection wrapper
+        console.log("Raw response received from Google.");
+        
+        // 1. Isolate the inner data payload from Google's wrapper function
         const match = data.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
         
         if (!match || !match[1]) {
-          throw new Error("Unable to decode the sheet data block. Verify that 'Publish to Web' is active.");
+          throw new Error("Unable to parse the data structure. Ensure your sheet is Published to Web.");
         }
 
-        const json = JSON.parse(match[1]);
+        // 2. CRITICAL FIX: Sanitize control breaks and unescaped quotes to prevent JSON parsing crashes
+        let cleanJsonText = match[1]
+          .replace(/\\x22/g, '"')       /* Re-align hex quotation marks */
+          .replace(/[\u0000-\u001F]+/g, (match) => match.replace(/\n/g, '\\n').replace(/\r/g, '\\r')); /* Escape row line breaks */
+
+        const json = JSON.parse(cleanJsonText);
+        console.log("JSON successfully parsed:", json);
         
-        // Intercept standard errors passed back inside the structural object
         if (json.status === 'error') {
-          throw new Error(`Google Sheet returned error: ${json.errors[0].detailed_message}`);
+          throw new Error(`Google Sheet API error: ${json.errors.detailed_message}`);
         }
 
         const rows = json.table.rows;
+        const cols = json.table.cols;
         const tableHead = document.getElementById('table-head');
         const tableBody = document.getElementById('table-body');
 
-        // 1. Build out the headers mapping values dynamically
+        // 3. Build headers mapping
         let headerRow = '<tr>';
-        json.table.cols.forEach((col, index) => {
-          // Fallbacks: Explicit label -> First cell item data string -> Column index string
-          let headerText = col.label ? col.label : (rows[0] && rows[0].c[index] ? rows[0].c[index].v : `Column ${index + 1}`);
+        let hasLabels = false;
+
+        cols.forEach((col, index) => {
+          let headerText = "";
+          if (col && col.label) {
+            headerText = col.label;
+            hasLabels = true;
+          } else if (rows && rows[0] && rows[0].c && rows[0].c[index]) {
+            headerText = rows[0].c[index].v !== null ? rows[0].c[index].v : "";
+          } else {
+            headerText = `Column ${index + 1}`;
+          }
           headerRow += `<th>${headerText}</th>`;
         });
         headerRow += '</tr>';
         tableHead.innerHTML = headerRow;
 
-        // 2. Build rows structure mapping individual data nodes
+        // 4. Build table rows mapping
+        tableBody.innerHTML = ''; // Clear prior states
         rows.forEach((row, rowIndex) => {
-          // Skip the first row if you are pulling headers from the row data instead of explicit column labels
-          if (!json.table.cols[0].label && rowIndex === 0) return; 
+          // Skip row 0 if it was manually pulled to act as column header label text fallbacks
+          if (!hasLabels && rowIndex === 0) return; 
+          if (!row || !row.c) return;
 
           let tr = document.createElement('tr');
           row.c.forEach(cell => {
             let td = document.createElement('td');
-            // Safely verify if node holds content formatting values
-            td.textContent = cell && cell.v !== null ? cell.v : '';
+            let cellValue = '';
+            if (cell) {
+              cellValue = cell.f !== undefined && cell.f !== null ? cell.f : (cell.v !== null ? cell.v : '');
+            }
+            td.textContent = cellValue;
             tr.appendChild(td);
           });
           tableBody.appendChild(tr);
         });
 
-        // Toggle visibility interfaces to display your finished UI
+        // Toggle UI states
         document.getElementById('status-display').style.display = 'none';
         document.getElementById('data-table').style.display = 'table';
+        console.log("Table successfully rendered onto page!");
       })
       .catch(err => {
-        // Display precise error messages safely to layout screens
         document.getElementById('status-display').innerHTML = `
           <div class="error-text">
             <strong>⚠️ Error Loading Data</strong><br>
             ${err.message}<br><br>
-            <small style="color:#718096">Check browser console logs (F12) for deep technical diagnostics context.</small>
-          </div>
-        `;
-        console.error("Technical debugging log details:", err);
+            <small style="color:#718096">Open the developer console (F12) to check background error logs.</small>
+          </div>`;
+        console.error("Critical rendering error:", err);
       });
+
   </script>
 </body>
 </html>
