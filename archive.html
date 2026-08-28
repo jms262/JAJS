@@ -111,16 +111,22 @@
     const FULL_URL = `https://google.com1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/gviz/tq?sheet=${encodeURIComponent(yearrlytotals)}`;
 
 
-    fetch(FULL_URL)
-      .then(res => res.text())
-      .then(data => {
-        // Hide loading text and show table
-        document.getElementById('loading-text').style.display = 'none';
-        document.getElementById('data-table').style.display = 'table';
+fetch(FULL_URL)
+  .then(res => res.text())
+  .then(data => {
+    // 1. Automatically extract the clean data inside Google's parenthesis wrapper
+    const match = data.match(/google\.visualization\.Query\.setResponse\(([\s\S]*?)\);/);
+    
+    if (!match || !match[1]) {
+      throw new Error("Could not parse the Google Sheets response format.");
+    }
 
-        // Parse Google's data format safely
-        const json = JSON.parse(data.substr(47).slice(0, -2));
-        const rows = json.table.rows;
+    // 2. Safely parse the extracted string into readable JSON
+    const json = JSON.parse(match[1]);
+
+    // 3. Hide loading text and show table
+    document.getElementById('loading-text').style.display = 'none';
+    document.getElementById('data-table').style.display = 'table';
         
         const tableHead = document.getElementById('table-head');
         const tableBody = document.getElementById('table-body');
