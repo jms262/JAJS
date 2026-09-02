@@ -9,199 +9,109 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
   <link rel="icon" href="img/golfball.jpg">
   
-  <style>
-    /* Clean custom overrides for the dynamic spreadsheet table */
-    .table-container {
-      max-width: 1000px;
-      margin: 20px auto;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      overflow-x: auto; 
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    th {
-      background-color: #1a73e8; 
-      color: white;
-      padding: 14px;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-    td {
-      padding: 12px 14px;
-      border-bottom: 1px solid #e0e0e0;
-      color: #333;
-    }
-    tr:hover {
-      background-color: #f1f3f4; 
-    }
-    .loading-message {
-      padding: 40px;
-      text-align: center;
-      color: #4a5568;
-      font-size: 16px;
-      font-weight: 500;
-    }
-    .error-text {
-      color: #e53e3e;
-      line-height: 1.5;
-      padding: 20px;
-      text-align: center;
-    }
-  </style>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+            text-transform: uppercase;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        #loading {
+            font-weight: bold;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- Side Navigation -->
-  <nav class="w3-sidebar w3-bar-block w3-card w3-animate-left w3-center" style="display:none" id="mySidebar">
-    <button class="w3-bar-item w3-button" onclick="w3_close()">Close <i class="fa fa-remove"></i></button>
-    <a href="index.html" class="w3-bar-item w3-button">Home</a>
-    <a href="schedule.html" class="w3-bar-item w3-button">Schedule</a>
-    <a href="weekly.html" class="w3-bar-item w3-button">Weekly</a>
-    <a href="stats.html" class="w3-bar-item w3-button">Stats</a>
-    <a href="rules.html" class="w3-bar-item w3-button">Rules</a>
-    <a href="archive.html" class="w3-bar-item w3-button">Past Years</a>
-    <a href="tsummary.html" class="w3-bar-item w3-button">Tournament Summary</a>
-  </nav>
-
-  <!-- Header -->
-  <header class="w3-container w3-theme w3-padding" id="myHeader">
-    <i onclick="w3_open()" class="fa fa-bars w3-xlarge w3-button w3-theme"></i>
-    <div class="w3-center">
-      <h1 class="w3-xxxlarge w3-animate-bottom">PGA Pick'em Challenge</h1>
-      <h3>Historical Data - Past Year Summary</h3>
-    </div>
-  </header>
-
-  <!-- Spreadsheet Data Table Section -->
-  <div class="w3-container w3-padding-32">
-    <div class="table-container">
-      <div id="status-display" class="loading-message">Loading live data from Google Sheets...</div>
-      
-      <table id="data-table" style="display: none;">
+    <h2>📊 Live Google Sheets Data</h2>
+    <div id="loading">Loading data from Google Sheets...</div>
+    
+    <table id="data-table" style="display: none;">
         <thead id="table-head"></thead>
         <tbody id="table-body"></tbody>
-      </table>
-    </div>
-  </div>
+    </table>
 
-  <!-- Footer Layout -->
-  <div class="w3-row-padding w3-center w3-margin-top">
-    <footer>
-      <hr>
-      <img class="bg" src="img/pebblefooter.jpeg" alt="Footer Banner">
-      <div style="position:relative;bottom:55px;" class="w3-tooltip w3-right">
-        <span class="w3-text w3-theme-light w3-padding">Go To Top</span>
-        <a class="w3-text-white" href="#myHeader">
-          <span class="w3-xlarge"><i class="fa fa-chevron-circle-up"></i></span>
-        </a>
-      </div>
-    </footer>
-  </div>
-
-  <!-- Core Google Sheets Data Engine Script -->
-  <!-- Core Google Sheets Data Engine Script -->
-  <script>
-    // CLEANED HARDCODED DIRECT URL - No dynamic math equations that can break or merge wrong
-    const FULL_URL = 'https://google.com';
-
-    console.log("Fetching clean data from:", FULL_URL);
-
-    fetch(FULL_URL)
-      .then(res => {
-        if (!res.ok) throw new Error(`Network issue connecting to Google (Status: ${res.status})`);
-        return res.text();
-      })
-      .then(csvText => {
-        console.log("Raw CSV response received from Google.");
+    <script>
+        // ⚠️ REPLACE THIS WITH YOUR OWN SPREADSHEET ID
+        const SPREADSHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI';
+        // Optional: specify sheet tab name (e.g., 'Sheet1')
+        const SHEET_TITLE = 'yearlytotals'; 
         
-        const tableHead = document.getElementById('table-head');
-        const tableBody = document.getElementById('table-body');
-
-        // Clear previous configurations
-        tableHead.innerHTML = '';
-        tableBody.innerHTML = '';
-
-        const rows = [];
-        let currentRow = [];
-        let currentCell = '';
-        let insideQuotes = false;
-
-        for (let i = 0; i < csvText.length; i++) {
-          let char = csvText[i];
-          let nextChar = csvText[i + 1];
-
-          if (char === '"') {
-            if (insideQuotes && nextChar === '"') {
-              currentCell += '"'; 
-              i++;
-            } else {
-              insideQuotes = !insideQuotes; 
+        // This endpoint returns sheet data wrapped in a clean text format
+        const URL = `https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_TITLE}`;
+//https://docs.google.com/spreadsheets/d/1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/edit?usp=sharing
+        async function fetchSheetData() {
+            try {
+                const response = await fetch(URL);
+                const text = await response.text();
+                
+                // The API returns data wrapped in a callback function: google.visualization.Query.setResponse({...})
+                // We extract the raw JSON object inside the parentheses
+                const jsonString = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
+                const data = JSON.parse(jsonString);
+                
+                displayTable(data.table);
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('loading').innerText = "Failed to load data. Verify your Sheet ID and permissions.";
             }
-          } else if (char === ',' && !insideQuotes) {
-            currentRow.push(currentCell.trim());
-            currentCell = '';
-          } else if ((char === '\r' || char === '\n') && !insideQuotes) {
-            if (char === '\r' && nextChar === '\n') i++; 
-            currentRow.push(currentCell.trim());
-            if (currentRow.length > 0 && currentRow.some(cell => cell !== '')) {
-              rows.push(currentRow);
-            }
-            currentRow = [];
-            currentCell = '';
-          } else {
-            currentCell += char;
-          }
-        }
-        if (currentCell || currentRow.length > 0) {
-          currentRow.push(currentCell.trim());
-          rows.push(currentRow);
         }
 
-        if (rows.length === 0) {
-          throw new Error("The spreadsheet worksheet appears to be completely empty.");
+        function displayTable(tableData) {
+            const headContainer = document.getElementById('table-head');
+            const bodyContainer = document.getElementById('table-body');
+            
+            // 1. Generate Headers
+            let headHtml = '<tr>';
+            tableData.cols.forEach(col => {
+                // If a column header is empty in Google Sheets, use an empty string
+                const label = col.label ? col.label : '';
+                headHtml += `<th>${label}</th>`;
+            });
+            headHtml += '</tr>';
+            headContainer.innerHTML = headHtml;
+
+            // 2. Generate Rows
+            let bodyHtml = '';
+            tableData.rows.forEach(row => {
+                bodyHtml += '<tr>';
+                row.c.forEach(cell => {
+                    // Handle empty cells gracefully
+                    const value = cell && cell.f ? cell.f : (cell && cell.v ? cell.v : '');
+                    bodyHtml += `<td>${value}</td>`;
+                });
+                bodyHtml += '</tr>';
+            });
+            bodyContainer.innerHTML = bodyHtml;
+
+            // Toggle Visibility
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('data-table').style.display = 'table';
         }
 
-        // 1. Map Headers (Row 1 data points)
-        const headers = rows[0];
-        let headerHtml = '<tr>';
-        headers.forEach(headerText => {
-          headerHtml += `<th>${headerText || '—'}</th>`;
-        });
-        headerHtml += '</tr>';
-        tableHead.innerHTML = headerHtml;
-
-        // 2. Map Row Data (Row 2 data points downwards)
-        for (let i = 1; i < rows.length; i++) {
-          let tr = document.createElement('tr');
-          rows[i].forEach(cellText => {
-            let td = document.createElement('td');
-            td.textContent = cellText;
-            tr.appendChild(td);
-          });
-          tableBody.appendChild(tr);
-        }
-
-        // Display Table UI elements
-        document.getElementById('status-display').style.display = 'none';
-        document.getElementById('data-table').style.display = 'table';
-        console.log("CSV Table mapping completed successfully!");
-      })
-      .catch(err => {
-        document.getElementById('status-display').innerHTML = `
-          <div class="error-text">
-            <strong>⚠️ Error Loading Data</strong><br>
-            ${err.message}<br><br>
-            <small style="color:#718096">Verify the spreadsheet layout and check browser development consoles for full data tracking trace lines.</small>
-          </div>`;
-        console.error("Critical extraction loop crash log trace:", err);
-      });
-  </script>
-
+        // Initialize fetching on page load
+        fetchSheetData();
+    </script>
   <!-- Sidebar / Interface Interaction Logic Script -->
   <script>
     function w3_open() {
