@@ -57,7 +57,7 @@
     const SHEET_TITLE = 'yearlytotals'; 
     
     // 2. Updated fail-safe URL layout targeting the public CSV streaming channel
-    const URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?output=csv&sheet=${SHEET_TITLE}`;
+    const URL = `https://google.com{SPREADSHEET_ID}/export?format=csv&sheet=${SHEET_TITLE}`;
 
     async function fetchSheetData() {
         try {
