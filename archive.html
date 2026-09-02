@@ -52,25 +52,20 @@
     </table>
 
 <script>
-    // 1. Put your spreadsheet ID and tab name here
-    //const SPREADSHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI';
-    const SPREADSHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI';
-  
-    const SHEET_TITLE = 'yearlytotals'; 
-    
-    // 2. Updated fail-safe URL layout targeting the public CSV streaming channel
-    const URL = `https://google.com{SPREADSHEET_ID}/export?format=csv&sheet=${SHEET_TITLE}`;
+    // Completely hardcoded URL to eliminate all variable syntax issues
+    const URL = 'https://google.com';
 
     async function fetchSheetData() {
         try {
+            console.log("Fetching from direct URL:", URL);
             const response = await fetch(URL);
-            if (!response.ok) throw new Error("Network request failed");
+            if (!response.ok) throw new Error("Network request failed with status: " + response.status);
             const csvText = await response.text();
             
             parseAndDisplayCSV(csvText);
         } catch (error) {
             console.error("Error fetching data:", error);
-            document.getElementById('loading').innerText = "Failed to load data. Ensure the sheet is 'Published to Web' as a CSV.";
+            document.getElementById('loading').innerText = "Failed to load data. Verify that your sheet is shared as 'Anyone with the link can view'.";
         }
     }
 
@@ -80,7 +75,6 @@
         
         // Split text into individual row arrays
         const rows = csvData.split('\n').map(row => {
-            // Simple regex splitter to handle data containing standard text strings cleanly
             return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
         });
 
@@ -97,7 +91,7 @@
         // 2. Render Table Body Rows
         let bodyHtml = '';
         for (let i = 1; i < rows.length; i++) {
-            if (rows[i].length === 1 && rows[i][0] === "") continue; // Skip blank trailing lines
+            if (rows[i].length === 1 && rows[i][0].trim() === "") continue; 
             bodyHtml += '<tr>';
             rows[i].forEach(cell => {
                 bodyHtml += `<td>${cell.replace(/"/g, '').trim()}</td>`;
@@ -111,9 +105,10 @@
         document.getElementById('data-table').style.display = 'table';
     }
 
-    // Run automatically on boot
+    // Run automatically on load
     fetchSheetData();
 </script>
+
 
   <!-- Sidebar / Interface Interaction Logic Script -->
   <script>
