@@ -52,66 +52,67 @@
     </table>
 
 <script>
-    // ⚠️ REPLACE THIS WITH YOUR OWN SPREADSHEET ID
+    // 1. Put your spreadsheet ID and tab name here
     const SPREADSHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI';
-    // Optional: specify sheet tab name (e.g., 'Sheet1')
     const SHEET_TITLE = 'yearlytotals'; 
     
-    // This endpoint returns sheet data wrapped in a clean text format
-    const URL = `https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_TITLE}`;
-//https://docs.google.com/spreadsheets/d/1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/edit?usp=sharing
-        async function fetchSheetData() {
-            try {
-                const response = await fetch(URL);
-                const text = await response.text();
-                
-                // The API returns data wrapped in a callback function: google.visualization.Query.setResponse({...})
-                // We extract the raw JSON object inside the parentheses
-                const jsonString = text.substring(text.indexOf("{"), text.lastIndexOf("}") + 1);
-                const data = JSON.parse(jsonString);
-                
-                displayTable(data.table);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                document.getElementById('loading').innerText = "Failed to load data. Verify your Sheet ID and permissions.";
-            }
-        }
+    // 2. Updated fail-safe URL layout targeting the public CSV streaming channel
+    const URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/pub?output=csv&sheet=${SHEET_TITLE}`;
 
-        function displayTable(tableData) {
-            const headContainer = document.getElementById('table-head');
-            const bodyContainer = document.getElementById('table-body');
+    async function fetchSheetData() {
+        try {
+            const response = await fetch(URL);
+            if (!response.ok) throw new Error("Network request failed");
+            const csvText = await response.text();
             
-            // 1. Generate Headers
+            parseAndDisplayCSV(csvText);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            document.getElementById('loading').innerText = "Failed to load data. Ensure the sheet is 'Published to Web' as a CSV.";
+        }
+    }
+
+    function parseAndDisplayCSV(csvData) {
+        const headContainer = document.getElementById('table-head');
+        const bodyContainer = document.getElementById('table-body');
+        
+        // Split text into individual row arrays
+        const rows = csvData.split('\n').map(row => {
+            // Simple regex splitter to handle data containing standard text strings cleanly
+            return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        });
+
+        // 1. Render Table Headers
+        if (rows.length > 0) {
             let headHtml = '<tr>';
-            tableData.cols.forEach(col => {
-                // If a column header is empty in Google Sheets, use an empty string
-                const label = col.label ? col.label : '';
-                headHtml += `<th>${label}</th>`;
+            rows[0].forEach(header => {
+                headHtml += `<th>${header.replace(/"/g, '').trim()}</th>`;
             });
             headHtml += '</tr>';
             headContainer.innerHTML = headHtml;
-
-            // 2. Generate Rows
-            let bodyHtml = '';
-            tableData.rows.forEach(row => {
-                bodyHtml += '<tr>';
-                row.c.forEach(cell => {
-                    // Handle empty cells gracefully
-                    const value = cell && cell.f ? cell.f : (cell && cell.v ? cell.v : '');
-                    bodyHtml += `<td>${value}</td>`;
-                });
-                bodyHtml += '</tr>';
-            });
-            bodyContainer.innerHTML = bodyHtml;
-
-            // Toggle Visibility
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('data-table').style.display = 'table';
         }
 
-        // Initialize fetching on page load
-        fetchSheetData();
-    </script>
+        // 2. Render Table Body Rows
+        let bodyHtml = '';
+        for (let i = 1; i < rows.length; i++) {
+            if (rows[i].length === 1 && rows[i][0] === "") continue; // Skip blank trailing lines
+            bodyHtml += '<tr>';
+            rows[i].forEach(cell => {
+                bodyHtml += `<td>${cell.replace(/"/g, '').trim()}</td>`;
+            });
+            bodyHtml += '</tr>';
+        }
+        bodyContainer.innerHTML = bodyHtml;
+
+        // Toggle UI elements visible
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('data-table').style.display = 'table';
+    }
+
+    // Run automatically on boot
+    fetchSheetData();
+</script>
+
   <!-- Sidebar / Interface Interaction Logic Script -->
   <script>
     function w3_open() {
