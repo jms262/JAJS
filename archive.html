@@ -51,14 +51,14 @@
         <tbody id="table-body"></tbody>
     </table>
 
-    <script>
-        // ⚠️ REPLACE THIS WITH YOUR OWN SPREADSHEET ID
-        const SPREADSHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI';
-        // Optional: specify sheet tab name (e.g., 'Sheet1')
-        const SHEET_TITLE = 'yearlytotals'; 
-        
-        // This endpoint returns sheet data wrapped in a clean text format
-        const URL = `https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_TITLE}`;
+<script>
+    // ⚠️ REPLACE THIS WITH YOUR OWN SPREADSHEET ID
+    const SPREADSHEET_ID = '1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI';
+    // Optional: specify sheet tab name (e.g., 'Sheet1')
+    const SHEET_TITLE = 'yearlytotals'; 
+    
+    // This endpoint returns sheet data wrapped in a clean text format
+    const URL = `https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_TITLE}`;
 //https://docs.google.com/spreadsheets/d/1BoF96ilpgiG20zPl0tvolq5ffiZ7S9xrqttla7WEECI/edit?usp=sharing
         async function fetchSheetData() {
             try {
